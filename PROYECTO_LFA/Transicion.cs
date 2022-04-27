@@ -8,7 +8,7 @@ namespace PROYECTO_LFA
 {
     public class Transicion
     {
-        private string inicial;
+        private int inicial;
 
         private string leido;
 
@@ -16,17 +16,17 @@ namespace PROYECTO_LFA
 
         private string simbolo_push;
 
-        private string final;
+        private int final;
 
         public Transicion(){
-            inicial = "";
+            inicial = 0;
             leido = "";
             simbolo_pop = "";
             simbolo_push = "";
-            final = "";
+            final = 0;
         }
 
-        public string Inicial
+        public int Inicial
         {
             get { return inicial; }
             set { inicial = value; }
@@ -46,7 +46,7 @@ namespace PROYECTO_LFA
             get { return simbolo_push; }
             set { simbolo_push = value;}
         }
-        public string Final
+        public int Final
         {
             get { return final; }  
             set { final = value; }

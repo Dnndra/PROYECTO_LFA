@@ -44,7 +44,7 @@ namespace PROYECTO_LFA
             this.btn_archivo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_archivo.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_archivo.Location = new System.Drawing.Point(55, 103);
-            this.btn_archivo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btn_archivo.Margin = new System.Windows.Forms.Padding(2);
             this.btn_archivo.Name = "btn_archivo";
             this.btn_archivo.Size = new System.Drawing.Size(245, 78);
             this.btn_archivo.TabIndex = 0;
@@ -89,6 +89,7 @@ namespace PROYECTO_LFA
             this.Load.TabIndex = 3;
             this.Load.Text = "Comprobar cadena";
             this.Load.UseVisualStyleBackColor = false;
+            this.Load.Click += new System.EventHandler(this.Load_Click);
             // 
             // ShowAP
             // 
@@ -110,7 +111,7 @@ namespace PROYECTO_LFA
             this.Controls.Add(this.CadenaEntrante);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btn_archivo);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Proyecto";
             this.ResumeLayout(false);
