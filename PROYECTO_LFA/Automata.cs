@@ -8,12 +8,40 @@ namespace PROYECTO_LFA
 {
     public class Automata
     {
-        string num_estados { get; set; }
+        private int num_estados;
 
-        string estado_inicial { get; set; }
+        private int estado_inicial;
 
-        string[] conjunto_finales { get; set; }
+        private List<string> conjunto_finales;
 
-        List<Transicion> transiciones { get; set; }
+        private List<Transicion> transiciones;
+
+        public Automata()
+        {
+            num_estados = 0;
+            estado_inicial = 0;
+            transiciones = new List<Transicion>();
+            conjunto_finales = new List<string>();
+        }
+        public int N_Estados
+        {
+            get { return num_estados; }
+            set { num_estados = value;}
+        }
+        public int E_Inicial
+        {
+            get { return estado_inicial; }
+            set { estado_inicial = value;}
+        }
+        public List<string> C_Finales
+        {
+            get { return conjunto_finales; }
+            set { conjunto_finales = value;}
+        }
+        public List<Transicion> Transiciones
+        {
+            get { return transiciones; }
+            set { transiciones = value;}
+        }
     }
 }
