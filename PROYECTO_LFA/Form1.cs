@@ -56,11 +56,11 @@ namespace PROYECTO_LFA
                     {
                         var transicion = linea.Split(',');
                         Transicion obj = new Transicion();
-                        obj.inicial = transicion[0];
-                        obj.leido = transicion[1];
-                        obj.simbolo_pop = transicion[2] ;
-                        obj.simbolo_push = transicion[3];
-                        obj.final=transicion[4] ;
+                        obj.Inicial = transicion[0];
+                        obj.Leido = transicion[1];
+                        obj.Pop = transicion[2];
+                        obj.Push = transicion[3];
+                        obj.Final=transicion[4];
                         transicions.Add(obj);
 
                         linea = reader.ReadLine();
