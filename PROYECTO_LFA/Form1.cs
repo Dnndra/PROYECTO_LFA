@@ -107,6 +107,8 @@ namespace PROYECTO_LFA
                         if(t.Pop == Pila.Peek() && t.Leido == cadena)
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
+                            //encontramos trancisiones del estado actual
+                            Tactual = FindT(estadoA);
                             continue; // puse el continue aquí suponiendo que regrese el for, si no lo hace hay que hacer un bool que se vaya a un continue afuera del foreach
                         }
                     }
@@ -116,7 +118,6 @@ namespace PROYECTO_LFA
                         if (t.Leido == cadena)
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
-                            continue; // puse el continue aquí suponiendo que regrese el for, si no lo hace hay que hacer un bool que se vaya a un continue afuera del foreach
                         }
                     }
                 }
