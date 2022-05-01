@@ -77,49 +77,79 @@ namespace PROYECTO_LFA
 
         private void Load_Click(object sender, EventArgs e)
         {
+            //lectura de cadena entrante
             string cadena = CadenaEntrante.Text;
+            //definición de estado inicial 
             int estadoA = PushDown.E_Inicial;
-            bool aceptado = true, primera = true;
-            for (int j = 0; j < cadena.Length; j++)
+            //buscamos transiciones del estado inicial 
+            List<Transicion> Tactual = FindT(estadoA);  
+            //si alguna lee vacio, ingresamos a esa primero
+            foreach (Transicion t in Tactual)
             {
-                if (aceptado)
+                if(t.Leido == " ")
                 {
-                    aceptado = false;
-
-                    for(int i = 0; i < PushDown.Transiciones.Count; i++)
-                    {
-                        if (PushDown.Transiciones[i].Inicial == estadoA)
-                        {
-                            if (j == cadena.Length - 1 || primera)
-                            {
-                                if (Validacion(PushDown.Transiciones[i], " ", ref estadoA))
-                                {
-                                    i = -1;
-                                    primera = false;
-                                    continue;
-                                }
-                            }
-                            if(Validacion(PushDown.Transiciones[i], cadena[j].ToString(), ref estadoA))
-                            {
-                                aceptado = true;
-                                primera = false;
-                                break;
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-                    }
-                }
-                else
-                {
+                    estadoA = t.Final;
+                    //encontramos trancisiones del estado actual
+                    Tactual = FindT(estadoA);
+                    // si el push no está vacío, se mete su contenido a la pila
+                    if (t.Push != " ") Pila.Push(t.Push);
                     break;
                 }
             }
-            //mensaje de error
+            //realizamos proceso con cadena
+            for (int i = 0; i < cadena.Length; i++)
+            {
+                //si la pila tiene algo, buscamos transicion que saque lo que está en la pila primero 
+                if (Pila.Any())
+                {
+                    foreach(Transicion t in Tactual)
+                    {
+                        if(t.Pop == Pila.Peek() && t.Leido == cadena)
+                        {
+                            Validacion(t, cadena[i].ToString(), ref estadoA);
+                            continue; // puse el continue aquí suponiendo que regrese el for, si no lo hace hay que hacer un bool que se vaya a un continue afuera del foreach
+                        }
+                    }
+                    //si no hay ninguna transicion que saque lo último que tiene, unicamente válida que lea lo de la cadena
+                    foreach (Transicion t in Tactual)
+                    {
+                        if (t.Leido == cadena)
+                        {
+                            Validacion(t, cadena[i].ToString(), ref estadoA);
+                            continue; // puse el continue aquí suponiendo que regrese el for, si no lo hace hay que hacer un bool que se vaya a un continue afuera del foreach
+                        }
+                    }
+                }
+                else //si no tiene nada, mete la transición que lea el caracter
+                {
+                    foreach (Transicion t in Tactual)
+                    {
+                        if (t.Leido == cadena)
+                        {
+                            Validacion(t, cadena[i].ToString(), ref estadoA);
+                        }
+                    }
+                }
+                //encontramos trancisiones del estado actual
+                Tactual = FindT(estadoA);
+            }
+            //una vez hecho todo esto, se válida que la pila esté vacía 
+            if (Pila.Any())
+            {
+                DialogResult result  = MessageBox.Show("Cadena no aceptada por grámatica ingresada.\nIntente de nuevo.", "Error en grámatica", MessageBoxButtons.OK);
+            }
         }
-
+        List<Transicion> FindT(int estado)
+        {
+            List<Transicion> TFind;
+            return TFind = PushDown.Transiciones.FindAll(
+                //delegado para encontrar todas las transiciones 
+                delegate (Transicion t)
+                {
+                    return t.Inicial == estado;
+                }
+            );
+        }
         bool Validacion(Transicion t, string c, ref int estadoA)
         {
             if (t.Leido == c)
