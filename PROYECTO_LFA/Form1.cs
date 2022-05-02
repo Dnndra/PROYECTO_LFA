@@ -96,6 +96,7 @@ namespace PROYECTO_LFA
                     break;
                 }
             }
+            bool continuar = false;
             //realizamos proceso con cadena
             for (int i = 0; i < cadena.Length; i++)
             {
@@ -104,28 +105,35 @@ namespace PROYECTO_LFA
                 {
                     foreach(Transicion t in Tactual)
                     {
-                        if(t.Pop == Pila.Peek() && t.Leido == cadena)
+                        if(t.Pop == Pila.Peek() && t.Leido == cadena[i].ToString())
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
                             //encontramos trancisiones del estado actual
                             Tactual = FindT(estadoA);
-                            continue; // puse el continue aquí suponiendo que regrese el for, si no lo hace hay que hacer un bool que se vaya a un continue afuera del foreach
+                            continuar = true;
+                            break;
+                           // continue; // puse el continue aquí suponiendo que regrese el for, si no lo hace hay que hacer un bool que se vaya a un continue afuera del foreach
                         }
+                    }
+                    if (continuar)
+                    {
+                        break;
                     }
                     //si no hay ninguna transicion que saque lo último que tiene, unicamente válida que lea lo de la cadena
                     foreach (Transicion t in Tactual)
                     {
-                        if (t.Leido == cadena)
+                        if (t.Leido == cadena[i].ToString())
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
                         }
                     }
+                 
                 }
                 else //si no tiene nada, mete la transición que lea el caracter
                 {
                     foreach (Transicion t in Tactual)
                     {
-                        if (t.Leido == cadena)
+                        if (t.Leido == cadena[i].ToString())
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
                         }
