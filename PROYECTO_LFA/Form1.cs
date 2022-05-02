@@ -96,10 +96,10 @@ namespace PROYECTO_LFA
                     break;
                 }
             }
-            bool continuar = false;
             //realizamos proceso con cadena
             for (int i = 0; i < cadena.Length; i++)
             {
+                bool continuar =    false;
                 //si la pila tiene algo, buscamos transicion que saque lo que está en la pila primero 
                 if (Pila.Any())
                 {
@@ -112,12 +112,11 @@ namespace PROYECTO_LFA
                             Tactual = FindT(estadoA);
                             continuar = true;
                             break;
-                           // continue; // puse el continue aquí suponiendo que regrese el for, si no lo hace hay que hacer un bool que se vaya a un continue afuera del foreach
                         }
                     }
                     if (continuar)
                     {
-                        break;
+                        continue;
                     }
                     //si no hay ninguna transicion que saque lo último que tiene, unicamente válida que lea lo de la cadena
                     foreach (Transicion t in Tactual)
@@ -125,6 +124,7 @@ namespace PROYECTO_LFA
                         if (t.Leido == cadena[i].ToString())
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
+                            break;
                         }
                     }
                  
@@ -136,16 +136,30 @@ namespace PROYECTO_LFA
                         if (t.Leido == cadena[i].ToString())
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
+                            break;
                         }
                     }
                 }
                 //encontramos trancisiones del estado actual
                 Tactual = FindT(estadoA);
             }
-            //una vez hecho todo esto, se válida que la pila esté vacía 
-            if (Pila.Any())
+            //úlitmo estado o lectura de vacío al final de la cadena
+            foreach (Transicion t in Tactual)
+            {
+                if (t.Pop == Pila.Peek() && t.Leido == " ")
+                {
+                    Validacion(t, " ", ref estadoA);
+                    break;
+                }
+            }
+            //una vez hecho todo esto, se válida que la pila esté vacía y que haya terminado en un estado final
+            if (Pila.Any() || !PushDown.C_Finales.Contains(estadoA.ToString()))
             {
                 DialogResult result  = MessageBox.Show("Cadena no aceptada por grámatica ingresada.\nIntente de nuevo.", "Error en grámatica", MessageBoxButtons.OK);
+            }
+            else
+            {
+                //mensaje de éxito
             }
         }
         List<Transicion> FindT(int estado)
