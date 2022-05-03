@@ -93,9 +93,12 @@ namespace PROYECTO_LFA
             // 
             // ShowAP
             // 
+            this.ShowAP.Font = new System.Drawing.Font("Consolas", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ShowAP.Location = new System.Drawing.Point(107, 221);
             this.ShowAP.Multiline = true;
             this.ShowAP.Name = "ShowAP";
+            this.ShowAP.ReadOnly = true;
+            this.ShowAP.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ShowAP.Size = new System.Drawing.Size(653, 242);
             this.ShowAP.TabIndex = 4;
             // 
@@ -103,6 +106,7 @@ namespace PROYECTO_LFA
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(907, 491);

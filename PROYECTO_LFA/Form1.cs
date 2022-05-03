@@ -24,10 +24,12 @@ namespace PROYECTO_LFA
         int contadorlineas = 0;
         public Automata PushDown;
         public Stack<string> Pila;
+        public List<string> Diccionario;
         private void btn_archivo_Click(object sender, EventArgs e)
         {
             PushDown = new Automata();
             Pila = new Stack<string>();
+            Diccionario = new List<string>();   
             List<Transicion> transitions = new List<Transicion>();
             if(openFileDialog1.ShowDialog()== DialogResult.OK)
             {
@@ -60,6 +62,7 @@ namespace PROYECTO_LFA
                         Transicion obj = new Transicion();
                         obj.Inicial = int.Parse(transicion[0]);
                         obj.Leido = transicion[1];
+                        if(obj.Leido != " " && !Diccionario.Contains(obj.Leido))Diccionario.Add(obj.Leido);
                         obj.Pop = transicion[2];
                         obj.Push = transicion[3];
                         obj.Final= int.Parse(transicion[4]);
@@ -79,6 +82,7 @@ namespace PROYECTO_LFA
 
         private void Load_Click(object sender, EventArgs e)
         {
+            bool error = false;
             string config = "";
             string pila = "";
             Pila.Clear();
@@ -89,8 +93,16 @@ namespace PROYECTO_LFA
             int estadoA = PushDown.E_Inicial;
             //buscamos transiciones del estado inicial 
             List<Transicion> Tactual = FindT(estadoA);
-            //si alguna lee vacio, ingresamos a esa primero
             config = estadoA + "," + copia + "," + pila + Environment.NewLine;
+            for (int i = 0; i < cadena.Length; i++)
+            {
+                if (!Diccionario.Contains(cadena[i].ToString()))
+                {
+                    error = true;
+                    goto error;
+                }
+            }
+            //si alguna lee vacio, ingresamos a esa primero
             foreach (Transicion t in Tactual)
             {
                 if(t.Leido == " ")
@@ -123,20 +135,27 @@ namespace PROYECTO_LFA
                     {
                         if(t.Pop == Pila.Peek() && t.Leido == cadena[i].ToString())
                         {
-                            Validacion(t, cadena[i].ToString(), ref estadoA);
-                            //encontramos trancisiones del estado actual
-                            Tactual = FindT(estadoA);
-                            continuar = true;
-                            if (Pila.Any())
+                            if (Validacion(t, cadena[i].ToString(), ref estadoA))
                             {
-                                foreach (var item in Pila)
+                                //encontramos trancisiones del estado actual
+                                Tactual = FindT(estadoA);
+                                continuar = true;
+                                if (Pila.Any())
                                 {
-                                    pila = pila + item.ToString();
+                                    foreach (var item in Pila)
+                                    {
+                                        pila = pila + item.ToString();
+                                    }
                                 }
+                                copia = copia.Substring(1);
+                                config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
+                                break;
                             }
-                            copia = copia.Substring(1);
-                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
-                            break;
+                            else
+                            {
+                                error = true;
+                                break;
+                            }
                         }
                     }
                     if (continuar)
@@ -148,17 +167,23 @@ namespace PROYECTO_LFA
                     {
                         if (t.Leido == cadena[i].ToString())
                         {
-                            Validacion(t, cadena[i].ToString(), ref estadoA);
-                            if (Pila.Any())
+                            if (Validacion(t, cadena[i].ToString(), ref estadoA))
                             {
-                                foreach (var item in Pila)
+                                if (Pila.Any())
                                 {
-                                    pila = pila + item.ToString();
+                                    foreach (var item in Pila)
+                                    {
+                                        pila = pila + item.ToString();
+                                    }
                                 }
+                                copia = copia.Substring(1);
+                                config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
+                                break;
                             }
-                            copia = copia.Substring(1);
-                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
-                            break;
+                            else
+                            {
+                                error = true;
+                            }
                         }
                     }
                  
@@ -169,17 +194,24 @@ namespace PROYECTO_LFA
                     {
                         if (t.Leido == cadena[i].ToString())
                         {
-                            Validacion(t, cadena[i].ToString(), ref estadoA);
-                            if (Pila.Any())
+                            if (Validacion(t, cadena[i].ToString(), ref estadoA))
                             {
-                                foreach (var item in Pila)
+                                if (Pila.Any())
                                 {
-                                    pila = pila + item.ToString();
+                                    foreach (var item in Pila)
+                                    {
+                                        pila = pila + item.ToString();
+                                    }
                                 }
+                                copia = copia.Substring(1);
+                                config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
+                                break;
                             }
-                            copia = copia.Substring(1);
-                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
-                            break;
+                            else
+                            {
+                                error = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -194,19 +226,27 @@ namespace PROYECTO_LFA
                 {
                     if (t.Pop == Pila.Peek() && t.Leido == " ")
                     {
-                        Validacion(t, " ", ref estadoA);
-                        if (Pila.Any())
+                        if (Validacion(t, " ", ref estadoA))
                         {
-                            foreach (var item in Pila)
+                            if (Pila.Any())
                             {
-                                pila = pila + item.ToString();
+                                foreach (var item in Pila)
+                                {
+                                    pila = pila + item.ToString();
+                                }
                             }
+                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
+                            break;
                         }
-                        config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
-                        break;
+                        else
+                        {
+                            error = true;
+                            break;
+                        }
                     }
                 }
             }
+            if (error) goto error;
             if (!PushDown.C_Finales.Contains(estadoA.ToString()))
             {
                 pila = "";
@@ -215,23 +255,31 @@ namespace PROYECTO_LFA
                 {
                     if (t.Pop == " " && t.Leido == " " && t.Push == " ")
                     {
-                        Validacion(t, " ", ref estadoA);
-                        if (Pila.Any())
+                        if (Validacion(t, " ", ref estadoA))
                         {
-                            foreach (var item in Pila)
+                            if (Pila.Any())
                             {
-                                pila = pila + item.ToString();
+                                foreach (var item in Pila)
+                                {
+                                    pila = pila + item.ToString();
+                                }
                             }
+                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
+                            break;
                         }
-                        config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
-                        break;
+                        else
+                        {
+                            error = true;
+                            break;
+                        }
                     }
                 }
             }
+            error:
             //una vez hecho todo esto, se válida que la pila esté vacía y que haya terminado en un estado final
-            if (Pila.Any() || !PushDown.C_Finales.Contains(estadoA.ToString()))
+            if (Pila.Any() || !PushDown.C_Finales.Contains(estadoA.ToString()) || error)
             {
-                ShowAP.Text = config;
+                ShowAP.Text = config + "ERROR";
                 DialogResult result  = MessageBox.Show("Cadena no aceptada por grámatica ingresada.\nIntente de nuevo.", "Error en grámatica", MessageBoxButtons.OK);
             }
             else
