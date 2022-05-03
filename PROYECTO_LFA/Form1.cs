@@ -22,10 +22,12 @@ namespace PROYECTO_LFA
         int numero_estados = 0;
         int estado_inicial = 0;
         int contadorlineas = 0;
-        Automata PushDown = new Automata();
-        Stack<string> Pila = new Stack<string>();
+        public Automata PushDown;
+        public Stack<string> Pila;
         private void btn_archivo_Click(object sender, EventArgs e)
         {
+            PushDown = new Automata();
+            Pila = new Stack<string>();
             List<Transicion> transitions = new List<Transicion>();
             if(openFileDialog1.ShowDialog()== DialogResult.OK)
             {
@@ -77,13 +79,18 @@ namespace PROYECTO_LFA
 
         private void Load_Click(object sender, EventArgs e)
         {
+            string config = "";
+            string pila = "";
+            Pila.Clear();
             //lectura de cadena entrante
             string cadena = CadenaEntrante.Text;
+            string copia = cadena;
             //definición de estado inicial 
             int estadoA = PushDown.E_Inicial;
             //buscamos transiciones del estado inicial 
-            List<Transicion> Tactual = FindT(estadoA);  
+            List<Transicion> Tactual = FindT(estadoA);
             //si alguna lee vacio, ingresamos a esa primero
+            config = estadoA + "," + copia + "," + pila + Environment.NewLine;
             foreach (Transicion t in Tactual)
             {
                 if(t.Leido == " ")
@@ -93,12 +100,21 @@ namespace PROYECTO_LFA
                     Tactual = FindT(estadoA);
                     // si el push no está vacío, se mete su contenido a la pila
                     if (t.Push != " ") Pila.Push(t.Push);
+                    if (Pila.Any())
+                    {
+                        foreach (var item in Pila)
+                        {
+                            pila = pila + item.ToString();
+                        }
+                    }
+                    config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
                     break;
                 }
             }
             //realizamos proceso con cadena
             for (int i = 0; i < cadena.Length; i++)
             {
+                pila = "";
                 bool continuar =    false;
                 //si la pila tiene algo, buscamos transicion que saque lo que está en la pila primero 
                 if (Pila.Any())
@@ -111,6 +127,15 @@ namespace PROYECTO_LFA
                             //encontramos trancisiones del estado actual
                             Tactual = FindT(estadoA);
                             continuar = true;
+                            if (Pila.Any())
+                            {
+                                foreach (var item in Pila)
+                                {
+                                    pila = pila + item.ToString();
+                                }
+                            }
+                            copia = copia.Substring(1);
+                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
                             break;
                         }
                     }
@@ -124,6 +149,15 @@ namespace PROYECTO_LFA
                         if (t.Leido == cadena[i].ToString())
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
+                            if (Pila.Any())
+                            {
+                                foreach (var item in Pila)
+                                {
+                                    pila = pila + item.ToString();
+                                }
+                            }
+                            copia = copia.Substring(1);
+                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
                             break;
                         }
                     }
@@ -136,6 +170,15 @@ namespace PROYECTO_LFA
                         if (t.Leido == cadena[i].ToString())
                         {
                             Validacion(t, cadena[i].ToString(), ref estadoA);
+                            if (Pila.Any())
+                            {
+                                foreach (var item in Pila)
+                                {
+                                    pila = pila + item.ToString();
+                                }
+                            }
+                            copia = copia.Substring(1);
+                            config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
                             break;
                         }
                     }
@@ -143,23 +186,59 @@ namespace PROYECTO_LFA
                 //encontramos trancisiones del estado actual
                 Tactual = FindT(estadoA);
             }
-            //úlitmo estado o lectura de vacío al final de la cadena
-            foreach (Transicion t in Tactual)
+            if (Pila.Any())
             {
-                if (t.Pop == Pila.Peek() && t.Leido == " ")
+                pila = "";
+                //úlitmo estado o lectura de vacío al final de la cadena
+                foreach (Transicion t in Tactual)
                 {
-                    Validacion(t, " ", ref estadoA);
-                    break;
+                    if (t.Pop == Pila.Peek() && t.Leido == " ")
+                    {
+                        Validacion(t, " ", ref estadoA);
+                        if (Pila.Any())
+                        {
+                            foreach (var item in Pila)
+                            {
+                                pila = pila + item.ToString();
+                            }
+                        }
+                        config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
+                        break;
+                    }
+                }
+            }
+            if (!PushDown.C_Finales.Contains(estadoA.ToString()))
+            {
+                pila = "";
+                //úlitmo estado o lectura de vacío al final de la cadena
+                foreach (Transicion t in Tactual)
+                {
+                    if (t.Pop == " " && t.Leido == " " && t.Push == " ")
+                    {
+                        Validacion(t, " ", ref estadoA);
+                        if (Pila.Any())
+                        {
+                            foreach (var item in Pila)
+                            {
+                                pila = pila + item.ToString();
+                            }
+                        }
+                        config = config + estadoA + "," + copia + "," + pila + Environment.NewLine;
+                        break;
+                    }
                 }
             }
             //una vez hecho todo esto, se válida que la pila esté vacía y que haya terminado en un estado final
             if (Pila.Any() || !PushDown.C_Finales.Contains(estadoA.ToString()))
             {
+                ShowAP.Text = config;
                 DialogResult result  = MessageBox.Show("Cadena no aceptada por grámatica ingresada.\nIntente de nuevo.", "Error en grámatica", MessageBoxButtons.OK);
             }
             else
             {
+                ShowAP.Text = config;
                 //mensaje de éxito
+                DialogResult result = MessageBox.Show("Cadena aceptada por grámatica ingresada.", "Grámatica Aceptada", MessageBoxButtons.OK);
             }
         }
         List<Transicion> FindT(int estado)
