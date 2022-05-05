@@ -64,6 +64,7 @@ namespace PROYECTO_LFA
                         obj.Leido = transicion[1];
                         if(obj.Leido != " " && !Diccionario.Contains(obj.Leido))Diccionario.Add(obj.Leido);
                         obj.Pop = transicion[2];
+                        if (obj.Pop == String.Empty) obj.Pop = " ";
                         obj.Push = transicion[3];
                         obj.Final= int.Parse(transicion[4]);
                         transitions.Add(obj);
